@@ -1,1 +1,246 @@
+import { useEffect, useState } from "react"; 
+ import { ImageCard } from "../component/ImageCard" 
+ import "../style/HomePage.css" 
+  
+  
+ export const HomePage = () => { 
+     const [data, setData] = useState([]); 
+     const getData = async () => { 
+         const resp = await fetch("https://api.slingacademy.com/v1/sample-data/photos?limit=20"); 
+         const { photos } = await resp.json(); 
+         setData(photos) 
+         console.log(photos) 
+     } 
+  
+     useEffect(() => { 
+         getData() 
+     }, []) 
+     return ( 
+         <div id="parent"> 
+             { 
+                 data?.map((e, i) => { 
+                     return <ImageCard id={e.id} imageUrl={e.url} key={i} /> 
+                 }) 
+             } 
+         </div> 
+     ); 
+ }
 
+import React, { useEffect, useState } from "react"; 
+ import "../style/SinglePhoto.css" 
+ import { useParams } from "react-router-dom"; 
+  
+ export const SinglePhoto = () => { 
+   const [data, setData] = useState(); 
+   const { id } = useParams() 
+   const getData = async () => { 
+     const resp = await fetch(`https://api.slingacademy.com/v1/sample-data/photos/${id}`); 
+     const { photo } = await resp.json(); 
+     setData(photo) 
+   } 
+  
+   useEffect(() => { 
+     getData() 
+   }, []) 
+   return ( 
+     <div id="singlePhoto"> 
+       <img src={data?.url} alt="" /> 
+       <div> 
+         <h1>{data?.title}</h1> 
+         <p> 
+           {data?.description} 
+         </p> 
+       </div> 
+     </div> 
+   ) 
+ }
+  import React from "react" 
+   import { useNavigate } from "react-router-dom" 
+  
+   export const ImageCard = ({ imageUrl, id }) => { 
+     const navigate = useNavigate() 
+  
+     const redirectToPage = () => { 
+       navigate(`/${id}`) 
+     } 
+  
+     return ( 
+       <div> 
+         <img src={imageUrl} onClick={redirectToPage} alt="" /> 
+       </div> 
+     ) 
+   }
+
+import { Route, Routes } from "react-router-dom" 
+ import { HomePage } from "../Pages/HomePage" 
+ import { SinglePhoto } from "../Pages/SinglePhoto" // Corrected import path 
+  
+ export const CustomRoute = () => { 
+     return ( 
+         <Routes> 
+             <Route path="/" element={<HomePage />} /> 
+             <Route path="/:id" element={<SinglePhoto />} /> 
+         </Routes> 
+     ) 
+ }
+
+#parent {  
+     display: grid; 
+     min-width: 100%; 
+     grid-template-columns: repeat(4,200px); 
+     gap: 10px; 
+     justify-content: center; 
+     padding: 10px; 
+  
+ } 
+ #parent *{ 
+     margin: auto; 
+ } 
+  
+ #parent div{ 
+  
+     margin: auto; 
+ } 
+ #parent img {  
+     height: 200px; 
+     width: 200px; 
+     object-fit: cover; 
+     border-radius: 10px; 
+     cursor: pointer; 
+ }
+
+#singlePhoto { 
+   display: flex; 
+   background-color: rgb(4, 46, 94); 
+   flex-direction: row; 
+   color: white; 
+   width: 800px; 
+   justify-self: center; 
+   box-shadow: 3px 3px 5px 6px #ccc; 
+   margin: auto; 
+   align-self: center; 
+   align-content: center; 
+   margin-top: 140px; 
+   padding: 20px; 
+ } 
+ #singlePhoto h1 { 
+   font-size: 27px; 
+   padding: 10px; 
+ } 
+  
+ #singlePhoto p { 
+   font-size: 15px; 
+   padding: 10px; 
+ } 
+  
+ #singlePhoto * { 
+   margin: auto; 
+ } 
+  
+ #singlePhoto img { 
+   width: 300px; 
+   object-fit: cover; 
+   box-shadow: 1.5px 1.5px 3.5px 3px rgb(66, 107, 154); 
+   height: 250px; 
+   border-radius: 10px; 
+ } 
+  
+ #singlePhoto div { 
+   padding: 20px; 
+ }
+
+body { 
+   width: 100%; 
+   height: 100%; 
+   overflow: hidden; 
+ }
+
+import { CustomRoute } from "./routes/CustomRoute" 
+  
+  const App = () => <CustomRoute/> 
+  
+ export default App
+
+:root { 
+   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif; 
+   line-height: 1.5; 
+   font-weight: 400; 
+  
+   color-scheme: light dark; 
+   color: rgba(255, 255, 255, 0.87); 
+   background-color: #242424; 
+  
+   font-synthesis: none; 
+   text-rendering: optimizeLegibility; 
+   -webkit-font-smoothing: antialiased; 
+   -moz-osx-font-smoothing: grayscale; 
+   -webkit-text-size-adjust: 100%; 
+ } 
+  
+ a { 
+   font-weight: 500; 
+   color: #646cff; 
+   text-decoration: inherit; 
+ } 
+ a:hover { 
+   color: #535bf2; 
+ } 
+  
+ body { 
+   margin: 0; 
+   display: flex; 
+   place-items: center; 
+   min-width: 320px; 
+   min-height: 100vh; 
+ } 
+  
+ h1 { 
+   font-size: 3.2em; 
+   line-height: 1.1; 
+ } 
+  
+ button { 
+   border-radius: 8px; 
+   border: 1px solid transparent; 
+   padding: 0.6em 1.2em; 
+   font-size: 1em; 
+   font-weight: 500; 
+   font-family: inherit; 
+   background-color: #1a1a1a; 
+   cursor: pointer; 
+   transition: border-color 0.25s; 
+ } 
+ button:hover { 
+   border-color: #646cff; 
+ } 
+ button:focus, 
+ button:focus-visible { 
+   outline: 4px auto -webkit-focus-ring-color; 
+ } 
+  
+ @media (prefers-color-scheme: light) { 
+   :root { 
+     color: #213547; 
+     background-color: #ffffff; 
+   } 
+   a:hover { 
+     color: #747bff; 
+   } 
+   button { 
+     background-color: #f9f9f9; 
+   } 
+ }
+
+import React from 'react' 
+ import ReactDOM from 'react-dom' 
+ import { BrowserRouter } from 'react-router-dom'  
+ import App from './App.jsx' 
+ import './index.css' 
+  
+ ReactDOM.createRoot(document.getElementById('root')).render( 
+   <React.StrictMode> 
+     <BrowserRouter> 
+       <App /> 
+     </BrowserRouter> 
+   </React.StrictMode>, 
+ )
